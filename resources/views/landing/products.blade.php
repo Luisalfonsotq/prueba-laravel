@@ -1,2 +1,2 @@
-@extends('landing.products')
+@extends('layouts.landing')
 @section('title', 'Nuestros productos')
