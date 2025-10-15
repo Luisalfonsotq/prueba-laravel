@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\usuariosController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -12,3 +13,4 @@ Route::view('/productos', 'landing.products')->name('products');
 Route::view('/suma', 'landing.suma')->name('suma');
 Route::post('/suma', [App\Http\Controllers\SumaController::class, 'sumar'])->name('suma.post');
 // Route::post('/suma', [App\Http\Controllers\SumaController::class, 'sumar'])->name('suma.post');
+Route::get('/usuarios',[usuariosController::class, 'index'])->name('usuarios');
