@@ -5,6 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Productos;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProductRequest;
+// Como usarlo
+// index() → ✅ Lista todos los productos (GET /productos).
+
+// store() → ✅ Crea un producto (POST /productos).
+
+// show() → ✅ Muestra un producto específico (GET /productos/{id}).
+
+// update() → ✅ Actualiza un producto (PUT/PATCH /productos/{id}).
+
+// destroy() → ✅ Elimina un producto (DELETE /productos/{id}).
 
 class ApiProductosController extends Controller
 {
@@ -33,22 +43,33 @@ class ApiProductosController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        $producto = Productos::create($request->validated());
+        // Usando FormRequest para validar
+        $datos = $request->validated();
+
+        $producto = Productos::create($datos);
         return response()->json([
             'estado' => true,
             'mensaje' => "¡Producto creado exitosamente!",
             'producto' => $producto
-        ], 200);
+        ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Productos $productos)
+    public function show($id)
     {
+        $producto = Productos::find($id);
+        if (!$producto) {
+            return response()->json([
+                'estado' => true,
+                'mensaje' => 'Producto no encontrado'
+            ], 404);
+        }
+
         return response()->json([
             'estado' => true,
-            'producto' => $productos
+            'producto' => $producto
         ], 200);
     }
 
@@ -63,22 +84,41 @@ class ApiProductosController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Productos $productos)
+    public function update(StoreProductRequest $request, $id)
     {
-        $productos->update($request->all());
+        $producto = Productos::find($id);
+
+        if (!$producto) {
+            return response()->json([
+                'estado' => true,
+                'mensaje' => "Producto no encontrado."
+            ], 404);
+        }
+
+        $producto->update($request->validated());
+
         return response()->json([
             'estado' => true,
-            'mensaje' => "¡Producto actualizado exitosamente!",
-            'producto' => $productos
+            'mensaje' => '¡Producto actualizado exitosamente!',
+            'producto' => $producto
         ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Productos $productos)
+    public function destroy($id)
     {
-        $productos->delete();
+        $producto = Productos::find($id);
+        if(!$producto){
+            return response()->json([
+                'estado' => false,
+                'mensaje' => 'Producto no encotrado.'
+            ], 404);
+        }
+
+        $producto->delete();
+        
         return response()->json([
             'estado' => true,
             'mensaje' => "¡Producto eliminado exitosamente!"
